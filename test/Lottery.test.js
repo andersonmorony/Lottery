@@ -26,20 +26,39 @@ describe('Lottery', () => {
     });
 
     it('Should Get All Players', async () => {
-        players = await lottery.methods.getPlayers().call();
+        players = await lottery.methods.getPlayers().call({
+            from: accounts[0]
+        });
+        
         assert.ok(players);
     })
 
     it('Should Enter Player', async () => {
-        await lottery.methods.enter().send({ from: accounts[0], value: 1000000000000000000 });
-        players = await lottery.methods.getPlayers().call();
+        await lottery.methods.enter().send({ 
+            from: accounts[0], 
+            value: web3.utils.toWei('0.2', 'ether')
+        });
+        
+        players = await lottery.methods.getPlayers().call({
+            from: accounts[0]
+        });
+        
         assert.equal(players[0], accounts[0]);
+        assert.equal(1, players.length);
     });
 
     it('Should PickWinner', async () => {
-        await lottery.methods.enter().send({ from: accounts[0], value: 1000000000000000000 });
+        await lottery.methods.enter().send({
+            from: accounts[0],
+            value: web3.utils.toWei('0.2', 'ether')
+        });
+
         await lottery.methods.pickWinner().send({from: accounts[0]});
-        players = await lottery.methods.getPlayers().call();
+        
+        players = await lottery.methods.getPlayers().call({
+            from: accounts[0]
+        });
+        
         assert.deepEqual(players, []);
     });
 
